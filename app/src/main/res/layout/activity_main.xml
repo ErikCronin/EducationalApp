@@ -15,7 +15,8 @@
         android:background="@color/colorButton"
         android:onClick="openSettings"
         android:text="@string/settings"
-        android:textColor="@color/colorButtonText" />
+        android:textColor="@color/colorButtonText"
+        tools:ignore="RelativeOverlap" />
 
     <TextView
         android:layout_width="wrap_content"

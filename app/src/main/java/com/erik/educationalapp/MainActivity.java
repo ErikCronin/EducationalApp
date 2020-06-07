@@ -19,6 +19,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 @SuppressLint("SetTextI18n")
 public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_DIFFICULTY = "extraDifficulty";
@@ -26,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
     public static final String KEY_HIGHSCORE = "keyHighscore";
     private static final int REQUEST_CODE_QUIZ = 1;
 
-    public static String[] difficultyLevels = Question.getAllDifficultyLevels();
     private Spinner spinnerDifficulty;
 
     private TextView textViewHighscore;
@@ -37,12 +38,32 @@ public class MainActivity extends AppCompatActivity {
     public static SoundPool soundPool;
     private int soundConfirm, soundNewHighscore;
 
+    public static ArrayList<String> savedScores = new ArrayList<>();
+    public static String deconstructedSavedScores = "";
+    public static int attemptNo = 0;
+
+    static String convertToString(ArrayList<String> savedScores) {
+        StringBuilder builder = new StringBuilder();
+        // Append all integers in StringBuilder to the StringBuilder
+        for (String number : savedScores) {
+            builder.append("Attempt ").append(attemptNo).append(": ");
+            builder.append(number);
+            builder.append("\n");
+            attemptNo++;
+        }
+        // Remove last delimiter with setLength
+        builder.setLength(builder.length() - 1);
+        return builder.toString();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
+
+        savedScores.add("");
 
         /* Creates what the user sees */
         textViewHighscore = findViewById(R.id.text_view_highscore);
@@ -119,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openHighscore(View view) {
+        deconstructedSavedScores = convertToString(savedScores);
         Intent intent = new Intent(this, HighscoreActivity.class);
         startActivity(intent);
     }

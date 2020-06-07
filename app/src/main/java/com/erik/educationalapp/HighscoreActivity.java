@@ -5,6 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.TextView;
+
+import static com.erik.educationalapp.MainActivity.deconstructedSavedScores;
 
 public class HighscoreActivity extends AppCompatActivity {
 
@@ -17,5 +20,8 @@ public class HighscoreActivity extends AppCompatActivity {
 
         ViewGroup scoreRows = findViewById(R.id.score_rows);
         getLayoutInflater().inflate(R.layout.highscore_text, scoreRows);
+
+        TextView scoreView = findViewById(R.id.highscore_layout);
+        scoreView.setText(deconstructedSavedScores);
     }
 }
