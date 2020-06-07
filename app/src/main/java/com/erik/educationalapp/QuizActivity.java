@@ -7,9 +7,15 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -56,11 +62,17 @@ public class QuizActivity extends AppCompatActivity {
 
     private long backPressedTime;
 
+    private SoundPool soundPool;
+    private int soundCorrect, soundWrong;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_quiz);
 
+        /* Creates what the user sees */
         textViewQuestion = findViewById(R.id.text_view_question);
         textViewScore = findViewById(R.id.text_view_score);
         textViewQuestionCount = findViewById(R.id.text_view_question_count);
@@ -110,6 +122,31 @@ public class QuizActivity extends AppCompatActivity {
                 showSolution();
             }
         }
+
+        /* Creates what the user hears - Correct or Wrong Noise*/
+        //Max Streams variable to save having to updates twice in OS if statement
+        int maxStreams = 1;
+
+        //If statement to decide which variables are needed to play audio
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //Will only run if the OS API 21 or higher
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build();
+            soundPool = new SoundPool.Builder()
+                    .setMaxStreams(maxStreams)
+                    .setAudioAttributes(audioAttributes)
+                    .build();
+
+        } else {
+            //Will only run if the OS API is 20 or lower
+            soundPool = new SoundPool(maxStreams, AudioManager.STREAM_MUSIC, 0);
+        }
+
+        //Loads in sounds from raw folder
+        soundCorrect = soundPool.load(this, R.raw.correct, 1);
+        soundWrong = soundPool.load(this, R.raw.bruh, 1);
     }
 
     private void showNextQuestion() {
@@ -196,7 +233,10 @@ public class QuizActivity extends AppCompatActivity {
 
         if (answerNr == currentQuestion.getAnswerNr()) {
             score++;
+            soundPool.play(soundCorrect, 1, 1, 0, 0, 1);
             textViewScore.setText("Score: " + score);
+        } else {
+            soundPool.play(soundWrong, 1, 1, 0, 0, 1);
         }
 
         showSolution();
@@ -255,6 +295,8 @@ public class QuizActivity extends AppCompatActivity {
         if (countDownTimer != null) {
             countDownTimer.cancel();
         }
+        soundPool.release();
+        soundPool = null;
     }
 
     @Override

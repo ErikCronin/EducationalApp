@@ -6,8 +6,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -26,11 +33,18 @@ public class MainActivity extends AppCompatActivity {
 
     private int highscore;
 
+    private MediaPlayer player;
+    public static SoundPool soundPool;
+    private int soundConfirm, soundNewHighscore;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
+        /* Creates what the user sees */
         textViewHighscore = findViewById(R.id.text_view_highscore);
         spinnerDifficulty = findViewById(R.id.spinner_difficulty);
 
@@ -44,9 +58,52 @@ public class MainActivity extends AppCompatActivity {
         spinnerDifficulty.setAdapter(adapterDifficulty);
 
         loadHighscore();
+
+        /* Creates what the user hears - Background Music */
+        //Checks if variable is empty and puts in background music, good for different song
+        if (player == null) {
+            player = MediaPlayer.create(this, R.raw.bgm_game);
+
+            //Restarts loop when music has finished
+            player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    player.start();
+                }
+            });
+        }
+
+        //Max Streams variable to save having to updates twice in OS if statement
+        int maxStreams = 4;
+
+        //If statement to decide which variables are needed to play audio
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            //Will only run if the OS API 21 or higher
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                    .setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .build();
+            soundPool = new SoundPool.Builder()
+                    .setMaxStreams(maxStreams)
+                    .setAudioAttributes(audioAttributes)
+                    .build();
+
+        } else {
+            //Will only run if the OS API is 20 or lower
+            soundPool = new SoundPool(maxStreams, AudioManager.STREAM_MUSIC, 0);
+        }
+
+        //Loads in sounds from raw folder
+        soundConfirm = soundPool.load(this, R.raw.ok, 1);
+        soundNewHighscore = soundPool.load(this, R.raw.newhighscore, 1);
+
+
+        player.start();
     }
 
     public void startQuiz(View view) {
+        soundPool.play(soundConfirm, 1, 1, 0, 0, 1);
+
         //This string will pass the chosen difficulty
         String difficulty = spinnerDifficulty.getSelectedItem().toString();
 
@@ -84,11 +141,37 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateHighscore(int highscoreNew) {
         highscore = highscoreNew;
-        textViewHighscore.setText("Highscore: " + highscore);
+        textViewHighscore.setBackgroundColor(Color.YELLOW);
+        soundPool.play(soundNewHighscore, 1, 1, 0, 0, 1);
+
+        textViewHighscore.setText("New Highscore: " + highscore + "!");
 
         SharedPreferences prefs = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(KEY_HIGHSCORE, highscore);
         editor.apply();
+    }
+
+    //Releases SoundPool so it doesn't consume system resources
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        soundPool.release();
+        soundPool = null;
+    }
+
+    //Stops music and clears it from memory, use this to input another song
+    private void stopPlayer() {
+        if (player != null) {
+            player.release();
+            player = null;
+        }
+    }
+
+    //Stops music from playing when app is closed
+    @Override
+    protected void onStop() {
+        super.onStop();
+        stopPlayer();
     }
 }
