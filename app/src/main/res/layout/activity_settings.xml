@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground"
+    android:padding="19dp"
+    tools:context=".SettingsActivity">
+
+    <TextView
+        android:id="@+id/text_view_title_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="30dp"
+        android:text="@string/settings"
+        android:textColor="@android:color/black"
+        android:textSize="35sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/text_view_background_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_view_title_settings"
+        android:layout_marginStart="75dp"
+        android:layout_marginTop="58sp"
+        android:text="@string/change_bg_colour"
+        android:textColor="@android:color/black"
+        android:textSize="26sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/button_save_settings"
+        android:layout_width="match_parent"
+        android:layout_height="65sp"
+        android:layout_below="@id/text_view_background_settings"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="54sp"
+        android:background="@color/colorButton"
+        android:onClick="saveSettings"
+        android:text="@string/save"
+        android:textColor="@color/colorButtonText"
+        android:textSize="32sp" />
+</RelativeLayout>

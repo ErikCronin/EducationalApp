@@ -18,8 +18,11 @@ public class MainActivity extends AppCompatActivity {
     public static final String SHARED_PREFS = "sharedPrefs";
     public static final String KEY_HIGHSCORE = "keyHighscore";
     private static final int REQUEST_CODE_QUIZ = 1;
-    private TextView textViewHighscore;
+
+    public static String[] difficultyLevels = Question.getAllDifficultyLevels();
     private Spinner spinnerDifficulty;
+
+    private TextView textViewHighscore;
 
     private int highscore;
 
@@ -51,6 +54,11 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(EXTRA_DIFFICULTY, difficulty);
         startActivityForResult(intent, REQUEST_CODE_QUIZ);
 
+    }
+
+    public void openSettings(View view) {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
     }
 
     @Override
