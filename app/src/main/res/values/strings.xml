@@ -18,4 +18,6 @@
     <string name="hard">Hard</string>
     <string name="save">Save</string>
     <string name="change_bg_colour">Change BG Colour</string>
+    <string name="highscores">Highscores</string>
+    <string name="there_s_no_highscores">There\'s no highscores :(</string>
 </resources>

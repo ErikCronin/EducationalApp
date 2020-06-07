@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
@@ -13,8 +12,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
+        android:background="@color/colorButton"
         android:onClick="openSettings"
-        android:text="@string/settings" />
+        android:text="@string/settings"
+        android:textColor="@color/colorButtonText" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -45,6 +46,7 @@
         android:layout_marginTop="42sp"
         android:background="@color/colorButton"
         android:onClick="startQuiz"
+        android:padding="12sp"
         android:text="@string/start_quiz"
         android:textColor="@color/colorButtonText" />
 
@@ -55,5 +57,17 @@
         android:layout_below="@id/button_start_quiz"
         android:layout_alignStart="@+id/button_start_quiz"
         android:layout_marginTop="16dp" />
+
+    <Button
+        android:id="@+id/button_history"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/spinner_difficulty"
+        android:layout_centerHorizontal="true"
+        android:background="@color/colorButton"
+        android:onClick="openHighscore"
+        android:padding="24sp"
+        android:text="@string/highscores"
+        android:textColor="@color/colorButtonText" />
 
 </RelativeLayout>
